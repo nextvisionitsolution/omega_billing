@@ -1,0 +1,472 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<style>
+
+.bill-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+/* Breadcrumb */
+.pro-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #9ca3af;
+    margin-bottom: 20px;
+}
+.pro-breadcrumb a {
+    color: #6b7280;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color .15s;
+}
+.pro-breadcrumb a:hover { color: var(--accent, #4a7cf7); }
+.pro-breadcrumb i { font-size: 11px; }
+.pro-breadcrumb .current { color: var(--accent, #4a7cf7); font-weight: 600; }
+
+/* Page header */
+.bill-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.bill-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: var(--accent, #4a7cf7);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.bill-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 2px;
+    background: var(--accent, #4a7cf7);
+    border-radius: 2px;
+}
+.bill-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0d1117;
+    letter-spacing: -.4px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    background: var(--accent, #4a7cf7);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(74,124,247,0.28);
+    transition: background .18s, box-shadow .18s, transform .15s;
+    text-decoration: none;
+}
+.btn-print:hover {
+    background: #3a6af3;
+    box-shadow: 0 6px 22px rgba(74,124,247,0.4);
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    background: #f3f6fb;
+    color: #6b7280;
+    border: 1.5px solid #e4e9f2;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    text-decoration: none;
+    transition: background .18s, color .18s;
+}
+.btn-back:hover { background: #eaeff7; color: #374151; }
+
+/* Main card */
+.bill-card {
+    background: #fff;
+    border: 1px solid #e4e9f2;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+/* Bill top strip */
+.bill-card-top {
+    background: linear-gradient(135deg, #f5f7ff 0%, #eef3ff 100%);
+    border-bottom: 1px solid #e4e9f2;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.bill-id-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.bill-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--accent, #4a7cf7);
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 22px;
+    box-shadow: 0 4px 18px rgba(74,124,247,0.35);
+    flex-shrink: 0;
+}
+
+.bill-id-text {}
+.bill-id-label {
+    font-size: 11.5px;
+    color: #9ca3af;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+.bill-id-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0d1117;
+    letter-spacing: -.3px;
+}
+
+/* Meta chips */
+.bill-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1.5px solid #e4e9f2;
+    border-radius: 12px;
+    padding: 10px 16px;
+    min-width: 140px;
+}
+.meta-chip-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+.meta-chip-icon.blue  { background: rgba(74,124,247,.1); color: #4a7cf7; }
+.meta-chip-icon.green { background: rgba(16,185,129,.1); color: #10b981; }
+
+.meta-chip-info {}
+.meta-chip-label { font-size: 10.5px; color: #9ca3af; font-weight: 500; margin-bottom: 1px; }
+.meta-chip-value { font-size: 14px; font-weight: 700; color: #0d1117; }
+
+/* Table section */
+.bill-table-section { padding: 0; }
+
+.section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    padding: 14px 28px 10px;
+    border-bottom: 1px solid #f1f4f9;
+    background: #fafbfd;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.section-label i { font-size: 13px; }
+
+table.bill-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+table.bill-detail-table thead tr {
+    background: #f8fafd;
+    border-bottom: 2px solid #eef1f8;
+}
+table.bill-detail-table thead th {
+    padding: 12px 28px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    text-align: left;
+}
+table.bill-detail-table thead th:not(:first-child) { text-align: right; }
+
+table.bill-detail-table tbody tr {
+    border-bottom: 1px solid #f3f5fb;
+    transition: background .12s;
+}
+table.bill-detail-table tbody tr:last-child { border-bottom: none; }
+table.bill-detail-table tbody tr:hover { background: #f8faff; }
+
+table.bill-detail-table td {
+    padding: 15px 28px;
+    vertical-align: middle;
+    color: #1f2937;
+}
+table.bill-detail-table td:not(:first-child) { text-align: right; }
+
+.item-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.item-avatar {
+    width: 34px;
+    height: 34px;
+    background: rgba(74,124,247,0.09);
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    color: #4a7cf7;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.item-name { font-weight: 600; color: #111827; }
+
+.qty-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f3f9;
+    border-radius: 6px;
+    padding: 3px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    min-width: 38px;
+}
+
+.price-val { color: #6b7280; font-weight: 500; }
+
+.amount-val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #10b981;
+}
+
+/* Grand total footer */
+.bill-footer {
+    border-top: 1px solid #e4e9f2;
+    padding: 20px 28px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #eef9f4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.footer-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
+}
+.footer-note i { font-size: 15px; }
+
+.grand-total-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.grand-total-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+.grand-total-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #4a7cf7;
+    letter-spacing: -.5px;
+}
+
+/* Row entrance animation */
+@keyframes rowSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+table.bill-detail-table tbody tr {
+    animation: rowSlide .25s ease both;
+}
+{% for i in items %}
+table.bill-detail-table tbody tr:nth-child({{ forloop.counter }}) {
+    animation-delay: {{ forloop.counter0 }}0ms;
+}
+{% endfor %}
+
+</style>
+
+<div class="bill-wrap">
+
+    <!-- Breadcrumb -->
+    <div class="pro-breadcrumb">
+        <a href="{% url 'pos' %}"><i class="bi bi-house-door"></i> Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <a href="{% url 'sales_report_page' %}">Sales Report</a>
+        <i class="bi bi-chevron-right"></i>
+        <span class="current">Bill #{{ bill.id }}</span>
+    </div>
+
+    <!-- Page header -->
+    <div class="bill-page-header">
+        <div>
+            <div class="bill-eyebrow">Invoice</div>
+            <div class="bill-title">Bill Detail</div>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'sales_report_page' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <button class="btn-print" onclick="window.print()">
+                <i class="bi bi-printer-fill"></i> Print Bill
+            </button>
+        </div>
+    </div>
+
+    <!-- Bill card -->
+    <div class="bill-card">
+
+        <!-- Top strip: Bill ID + meta -->
+        <div class="bill-card-top">
+            <div class="bill-id-block">
+                <div class="bill-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <div class="bill-id-text">
+                    <div class="bill-id-label">Bill Number</div>
+                    <div class="bill-id-number">#{{ bill.id }}</div>
+                </div>
+            </div>
+
+            <div class="bill-meta">
+                <div class="meta-chip">
+                    <div class="meta-chip-icon blue">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="meta-chip-info">
+                        <div class="meta-chip-label">Customer</div>
+                        <div class="meta-chip-value">{{ bill.customer_name }}</div>
+                    </div>
+                </div>
+
+                <div class="meta-chip">
+                    <div class="meta-chip-icon green">
+                        <i class="bi bi-currency-rupee"></i>
+                    </div>
+                    <div class="meta-chip-info">
+                        <div class="meta-chip-label">Grand Total</div>
+                        <div class="meta-chip-value">₹ {{ bill.total }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table section -->
+        <div class="bill-table-section">
+
+            <div class="section-label">
+                <i class="bi bi-list-ul"></i> Ordered Items
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="bill-detail-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in items %}
+                        <tr>
+                            <td>
+                                <div class="item-name-cell">
+                                    <div class="item-avatar">{{ i.item|first|upper }}</div>
+                                    <span class="item-name">{{ i.item }}</span>
+                                </div>
+                            </td>
+                            <td><span class="qty-pill">{{ i.qty }}</span></td>
+                            <td><span class="price-val">₹ {{ i.price }}</span></td>
+                            <td><span class="amount-val">₹ {{ i.amount }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- Footer: Grand Total -->
+        <div class="bill-footer">
+            <div class="footer-note">
+                <i class="bi bi-check-circle-fill" style="color:#10b981;"></i>
+                Payment received
+            </div>
+            <div class="grand-total-block">
+                <span class="grand-total-label">Grand Total</span>
+                <span class="grand-total-value">₹ {{ bill.total }}</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

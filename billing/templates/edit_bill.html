@@ -1,0 +1,74 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm p-4">
+
+        <h3 class="mb-4">
+            Edit Bill #{{ bill.id }}
+        </h3>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <table class="table table-bordered">
+
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for i in bill_items %}
+
+                    <tr>
+
+                        <td>
+                            {{ i.item.name }}
+                        </td>
+
+                        <td>
+                            <input
+                                type="number"
+                                name="qty_{{ i.id }}"
+                                value="{{ i.qty }}"
+                                class="form-control"
+                            >
+                        </td>
+
+                        <td>
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="price_{{ i.id }}"
+                                value="{{ i.price }}"
+                                class="form-control"
+                            >
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <button class="btn btn-primary">
+                Update Bill
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

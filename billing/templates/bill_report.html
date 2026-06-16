@@ -1,0 +1,366 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<style>
+
+body{
+    background:#f4f7fb;
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* HEADER */
+
+.page-header{
+    background:#fff;
+    padding:20px 25px;
+    border-radius:18px;
+    margin-bottom:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.06);
+}
+
+.page-header h3{
+    margin:0;
+    font-size:24px;
+    font-weight:700;
+    color:#111827;
+}
+
+/* MAIN CARD */
+
+.main-card{
+    border:none;
+    border-radius:20px;
+    background:#fff;
+    box-shadow:0 12px 35px rgba(0,0,0,.07);
+    overflow:hidden;
+}
+
+/* TABLE */
+
+.table{
+    margin-bottom:0;
+}
+
+.table thead{
+    background:#111827;
+    color:#fff;
+}
+
+.table thead th{
+    border:none;
+    padding:16px;
+    font-size:13px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.table tbody td{
+    padding:18px 16px;
+    vertical-align:middle;
+    border-color:#eef2f7;
+}
+
+.table tbody tr{
+    transition:.25s;
+}
+
+.table tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* BILL NUMBER */
+
+.bill-badge{
+    background:#eef2ff;
+    color:#4338ca;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:700;
+    font-size:13px;
+}
+
+/* SHIFT */
+
+.shift-badge{
+    background:#ecfdf5;
+    color:#16a34a;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:600;
+    font-size:13px;
+}
+
+/* TOTAL */
+
+.amount-badge{
+    background:#eff6ff;
+    color:#2563eb;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:700;
+    font-size:13px;
+}
+
+/* CUSTOMER */
+
+.customer-name{
+    font-weight:600;
+    color:#111827;
+}
+
+/* BUTTON */
+
+.btn-primary{
+    border:none;
+    border-radius:10px;
+    padding:8px 14px;
+    font-weight:600;
+    background:#2563eb;
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(37,99,235,.25);
+}
+
+/* EMPTY */
+
+.empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:#6b7280;
+}
+
+.empty-state i{
+    font-size:55px;
+    margin-bottom:10px;
+}
+
+.pagination .page-link{
+    border:none;
+    margin:0 4px;
+    border-radius:10px;
+    color:#2563eb;
+    font-weight:600;
+}
+
+.pagination .page-item.active .page-link{
+    background:#2563eb;
+    color:#fff;
+}
+
+.pagination .page-link:hover{
+    background:#eff6ff;
+}
+
+</style>
+
+<div class="container-fluid mt-4">
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+
+        <h3>
+            <i class="bi bi-receipt"></i>
+            Bill Report
+        </h3>
+
+    </div>
+
+    <div class="card main-card p-3">
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Bill No</th>
+                        <th>Customer</th>
+                        <th>Shift</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for bill in bills %}
+
+                    <tr>
+
+                        <td>
+                            <span class="bill-badge">
+                            #{{ bill.id }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="customer-name">
+                                {{ bill.customer_name }}
+                            </span>                            
+                        </td>
+
+                        <td>
+                            <span class="shift-badge">
+                            {{ bill.shift }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="amount-badge">
+                            ₹ {{ bill.total }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ bill.created_at|date:"d-m-Y h:i A" }}
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'bill_detail' bill.id %}"
+                               class="btn btn-primary btn-sm">
+
+                                <i class="bi bi-eye"></i>
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+
+                            <div class="empty-state">
+
+                                <i class="bi bi-receipt-cutoff"></i>
+
+                                <h5>No Bills Found</h5>
+
+                                <p class="mb-0">
+                                    No bills have been generated yet.
+                                </p>
+
+                            </div>
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% if page_obj.has_other_pages %}
+
+            <div class="d-flex justify-content-center py-4">
+
+                <nav>
+
+                    <ul class="pagination">
+
+                        {% if page_obj.has_previous %}
+
+                        <li class="page-item">
+
+                            <a class="page-link"
+                            href="?page=1">
+
+                                First
+
+                            </a>
+
+                        </li>
+
+                        <li class="page-item">
+
+                            <a class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}">
+
+                                Previous
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+
+                            {% if page_obj.number == num %}
+
+                                <li class="page-item active">
+
+                                    <span class="page-link">
+
+                                        {{ num }}
+
+                                    </span>
+
+                                </li>
+
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+
+                                <li class="page-item">
+
+                                    <a class="page-link"
+                                    href="?page={{ num }}">
+
+                                        {{ num }}
+
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+
+                        <li class="page-item">
+
+                            <a class="page-link"
+                            href="?page={{ page_obj.next_page_number }}">
+
+                                Next
+
+                            </a>
+
+                        </li>
+
+                        <li class="page-item">
+
+                            <a class="page-link"
+                            href="?page={{ page_obj.paginator.num_pages }}">
+
+                                Last
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </nav>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

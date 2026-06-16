@@ -1,0 +1,212 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap-icons.min.css' %}">
+
+<style>
+
+body{
+    background:#f5f7fb;
+    font-family:"Segoe UI",sans-serif;
+}
+
+/* HEADER */
+
+.page-header{
+    background:#fff;
+    padding:16px 20px;
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+
+.page-header h3{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
+}
+
+/* CARD */
+
+.main-card{
+    background:#fff;
+    border:none;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    overflow:hidden;
+}
+
+/* TABLE */
+
+.table{
+    margin:0;
+}
+
+.table thead{
+    background:#111827;
+    color:#fff;
+}
+
+.table th{
+    font-size:14px;
+    padding:14px;
+}
+
+.table td{
+    padding:14px;
+    vertical-align:middle;
+    font-size:14px;
+}
+
+.table tbody tr{
+    transition:.2s;
+}
+
+.table tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* BADGE */
+
+.id-badge{
+    background:#eff6ff;
+    color:#2563eb;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* BUTTON */
+
+.btn{
+    border-radius:10px;
+    font-size:13px;
+    font-weight:500;
+}
+
+.btn-warning{
+    color:white;
+}
+
+.action-box{
+    display:flex;
+    gap:8px;
+}
+
+/* EMPTY */
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#6b7280;
+}
+
+</style>
+
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+    <div class="page-header">
+
+        <h3>
+            <i class="bi bi-folder2-open"></i>
+            Category List
+        </h3>
+
+    </div>
+
+    <!-- CARD -->
+    <div class="card main-card p-3">
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category Name</th>
+                        <th width="180">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for c in categories %}
+
+                <tr>
+
+                    <td>
+                        <span class="id-badge">
+                            #{{ c.id }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <strong>{{ c.name }}</strong>
+                    </td>
+
+                    <td>
+
+                        <div class="action-box">
+
+                            <a
+                            href="{% url 'edit_category' c.id %}"
+                            class="btn btn-warning btn-sm">
+
+                            <i class="bi bi-pencil-square"></i>
+                            Edit
+
+                            </a>
+
+                            <a
+                            href="{% url 'delete_category' c.id %}"
+                            class="btn btn-danger btn-sm">
+
+                            <i class="bi bi-trash"></i>
+                            Delete
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="3">
+
+                        <div class="empty">
+
+                            <i class="bi bi-folder-x fs-1"></i>
+
+                            <h5 class="mt-2">
+                                No Categories Found
+                            </h5>
+
+                        </div>
+
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

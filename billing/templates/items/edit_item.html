@@ -1,0 +1,264 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap-icons.min.css' %}">
+
+<style>
+
+body{
+    background:#f5f7fb;
+    font-family:"Segoe UI",sans-serif;
+}
+
+/* HEADER */
+
+.page-header{
+    background:#fff;
+    padding:16px 20px;
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+
+.page-header h3{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
+}
+
+/* CARD */
+
+.form-card{
+    max-width:850px;
+    margin:auto;
+    border:none;
+    border-radius:18px;
+    background:#fff;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+/* LABEL */
+
+.form-label{
+    font-weight:600;
+    color:#374151;
+    margin-bottom:8px;
+}
+
+/* INPUT */
+
+.form-control{
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    padding:12px;
+    transition:.3s;
+}
+
+.form-control:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* BUTTON */
+
+.btn{
+    border-radius:12px;
+    font-weight:600;
+}
+
+.btn-update{
+    background:#16a34a;
+    color:#fff;
+    border:none;
+    padding:12px;
+}
+
+.btn-update:hover{
+    transform:translateY(-2px);
+}
+
+.icon-box{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    background:#eff6ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:15px;
+}
+
+.icon-box i{
+    color:#2563eb;
+    font-size:30px;
+}
+
+</style>
+
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+
+    <div class="page-header d-flex justify-content-between align-items-center">
+
+        <h3>
+            <i class="bi bi-pencil-square"></i>
+            Edit Item
+        </h3>
+
+        <a href="{% url 'item_list' %}"
+        class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+            Back
+
+        </a>
+
+    </div>
+
+
+    <!-- FORM CARD -->
+
+    <div class="card form-card p-4">
+
+        <div class="icon-box">
+            <i class="bi bi-box-seam"></i>
+        </div>
+
+        <h4 class="text-center mb-4">
+            Update Item Details
+        </h4>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <!-- Category -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Category
+                </label>
+
+                <select
+                name="category"
+                class="form-control"
+                required>
+
+                    {% for c in categories %}
+
+                    <option
+                    value="{{ c.id }}"
+                    {% if c.id == item.category.id %}
+                    selected
+                    {% endif %}
+                    >
+
+                    {{ c.name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- Item Name -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Item Name
+                </label>
+
+                <input
+                type="text"
+                name="name"
+                value="{{ item.name }}"
+                class="form-control"
+                placeholder="Enter item name"
+                required>
+
+            </div>
+
+
+            <!-- Prices -->
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Price 1
+                    </label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="price1"
+                    value="{{ item.price1 }}"
+                    class="form-control">
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Price 2
+                    </label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="price2"
+                    value="{{ item.price2 }}"
+                    class="form-control">
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Price 3
+                    </label>
+
+                    <input
+                    type="number"
+                    step="0.01"
+                    name="price3"
+                    value="{{ item.price3|default:'0' }}"
+                    class="form-control">
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-4">
+
+                <button
+                type="submit"
+                class="btn btn-update w-100">
+
+                    <i class="bi bi-check-circle"></i>
+                    Update Item
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

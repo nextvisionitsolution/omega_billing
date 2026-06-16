@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Add Item Size</title>
+
+    {% load static %}
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap.min.css' %}">
+
+    <style>
+
+    body{
+        background:#eef2f7;
+        margin:0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+        width:220px;
+        height:100vh;
+        position:fixed;
+        left:0;
+        top:0;
+        background:#111827;
+        padding-top:20px;
+    }
+
+    .sidebar h5{
+        color:#fff;
+        text-align:center;
+        margin-bottom:15px;
+    }
+
+    .sidebar a{
+        display:block;
+        color:#fff;
+        padding:12px 15px;
+        text-decoration:none;
+        font-size:15px;
+    }
+
+    .sidebar a:hover{
+        background:#374151;
+    }
+
+    /* MAIN */
+    .content{
+        margin-left:220px;
+        padding:20px;
+    }
+
+    .card{
+        border-radius:12px;
+    }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h5>Omega POS</h5>
+
+    <a href="{% url 'pos' %}">
+        🏠 Main Page
+    </a>
+
+    <a href="{% url 'sales_report_page' %}">
+        📊 Sales Report
+    </a>
+
+    <a href="{% url 'item_list' %}">
+        📦 Item List
+    </a>
+
+    <a href="{% url 'add_item' %}">
+        ➕ Add Item
+    </a>
+
+    <a href="{% url 'itemsize_list' %}">
+        📏 Item Size List
+    </a>
+
+    <a href="{% url 'add_itemsize' %}">
+        ➕ Add Item Size
+    </a>
+
+    <a href="/admin/" target="_blank">
+        ⚙️ Admin Panel
+    </a>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <div class="card shadow p-4">
+
+        <h2 class="mb-4">
+            📏 Add Item Size
+        </h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-primary">
+                Save Size
+            </button>
+
+            <a href="{% url 'itemsize_list' %}" class="btn btn-secondary">
+                Back
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

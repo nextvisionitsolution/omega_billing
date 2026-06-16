@@ -1,0 +1,10 @@
+
+services:
+  web:
+    build: .
+    container_name: omega_app
+    ports:
+      - "8003:8000"   # ✅ YOUR PORT
+    volumes:
+      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000

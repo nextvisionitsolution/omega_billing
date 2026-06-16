@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Item Size List</title>
+
+    {% load static %}
+<link rel="stylesheet" href="{% static 'billing/css/bootstrap.min.css' %}">
+
+    <style>
+
+    body{
+        background:#eef2f7;
+        margin:0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+        width:220px;
+        height:100vh;
+        position:fixed;
+        left:0;
+        top:0;
+        background:#111827;
+        padding-top:20px;
+    }
+
+    .sidebar h5{
+        color:#fff;
+        text-align:center;
+        margin-bottom:15px;
+    }
+
+    .sidebar a{
+        display:block;
+        color:#fff;
+        padding:12px 15px;
+        text-decoration:none;
+        font-size:15px;
+    }
+
+    .sidebar a:hover{
+        background:#374151;
+    }
+
+    /* MAIN */
+    .content{
+        margin-left:220px;
+        padding:20px;
+    }
+
+    .card{
+        border-radius:12px;
+    }
+
+    table{
+        background:white;
+    }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h5>Omega POS</h5>
+
+    <a href="{% url 'pos' %}">
+        🏠 Main Page
+    </a>
+
+    <a href="{% url 'sales_report_page' %}">
+        📊 Sales Report
+    </a>
+
+    <a href="{% url 'item_list' %}">
+        📦 Item List
+    </a>
+
+    <a href="{% url 'add_item' %}">
+        ➕ Add Item
+    </a>
+
+    <a href="{% url 'itemsize_list' %}">
+        📏 Item Size List
+    </a>
+
+    <a href="{% url 'add_itemsize' %}">
+        ➕ Add Item Size
+    </a>
+
+    <a href="/admin/" target="_blank">
+        ⚙️ Admin Panel
+    </a>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <div class="card shadow p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h2>
+                📏 Item Size List
+            </h2>
+
+            <a href="{% url 'add_itemsize' %}" class="btn btn-primary">
+                ➕ Add Item Size
+            </a>
+
+        </div>
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Size</th>
+                    <th>Price</th>
+                    <th width="180">Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for s in sizes %}
+
+            <tr>
+
+                <td>{{ s.id }}</td>
+
+                <td>{{ s.item.name }}</td>
+
+                <td>{{ s.size }}</td>
+
+                <td>₹{{ s.price }}</td>
+
+                <td>
+
+                    <a href="{% url 'edit_itemsize' s.id %}"
+                       class="btn btn-sm btn-warning">
+                       Edit
+                    </a>
+
+                    <a href="{% url 'delete_itemsize' s.id %}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Delete Size ?')">
+                       Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="5" class="text-center text-muted">
+                    No Item Sizes Found
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>
