@@ -622,11 +622,13 @@ table.pro-table td {
 
 <!-- SHORTCUT BAR -->
 <div class="shortcut-bar">
+    <span class="sc-key"><kbd>Ctrl+8</kbd> Edit Bills</span>
     <span class="sc-key"><kbd>Ctrl+E</kbd> Export</span>
     <span class="sc-key"><kbd>Ctrl+Q</kbd> Delete Shift Data</span>
     <span class="sc-key"><kbd>Ctrl+Y</kbd> Delete All</span>
     <span class="sc-key"><kbd>/</kbd> Search</span>
- 
+    <span class="sc-key"><kbd>Ctrl+8</kbd> Edit Bills</span>
+
 </div>
 
 <script>
@@ -940,6 +942,10 @@ document.addEventListener("keydown", function (e) {
     let tag = document.activeElement.tagName;
     if (tag === "INPUT") return;
 
+    if (e.ctrlKey && e.key === "8") {
+        e.preventDefault();
+        window.location.href = '/edited-bills/';
+    }
     if (e.ctrlKey && (e.key === "e" || e.key === "E")) {
         e.preventDefault();
         document.getElementById("exportBtn").click();
