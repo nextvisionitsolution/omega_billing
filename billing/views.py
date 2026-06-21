@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from datetime import datetime, time, timedelta
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from .models import Shift
 from .models import EditedBillHistory
 from django.conf import settings
@@ -22,7 +22,7 @@ import tempfile
 import os
 import pyzipper
 from django.http import FileResponse
-
+from django.contrib import messages
 def pos_page(request):
 
     current_shift = get_current_shift()
@@ -549,51 +549,70 @@ def add_item(request):
         # EXCEL UPLOAD
         if request.FILES.get("excel_file"):
 
-            excel_file = request.FILES["excel_file"]
+            try:
+                excel_file = request.FILES["excel_file"]
 
-            wb = openpyxl.load_workbook(excel_file)
+                wb = openpyxl.load_workbook(excel_file)
+                ws = wb.active
 
-            ws = wb.active
+                for row in ws.iter_rows(min_row=2, values_only=True):
 
-            for row in ws.iter_rows(min_row=2, values_only=True):
+                    category_name = row[0]
+                    item_name = row[1]
 
-                category_name = row[0]
-                item_name = row[1]
-                price1 = row[2] or 0
-                price2 = row[3] or 0
-                price3 = row[4] or 0
+                    # Convert safely
+                    try:
+                        price1 = Decimal(str(row[2] or 0).strip())
+                        price2 = Decimal(str(row[3] or 0).strip())
+                        price3 = Decimal(str(row[4] or 0).strip())
+                    except (InvalidOperation, ValueError):
+                        messages.error(
+                            request,
+                            f"Invalid price value found for item: {item_name}. Please upload correct Excel format."
+                        )
+                        return redirect("add_item")
 
-                category, created = Category.objects.get_or_create(
-                    name=category_name
+                    category, created = Category.objects.get_or_create(
+                        name=category_name
+                    )
+
+                    Item.objects.update_or_create(
+                        name=item_name,
+                        category=category,
+                        defaults={
+                            "price1": price1,
+                            "price2": price2,
+                            "price3": price3,
+                        }
+                    )
+
+                messages.success(request, "Excel imported successfully.")
+                return redirect("item_list")
+
+            except Exception:
+                messages.error(
+                    request,
+                    "Invalid Excel file. Please upload a valid Excel file with correct format."
                 )
-
-                Item.objects.update_or_create(
-
-                    name=item_name,
-                    category=category,
-
-                    defaults={
-                        "price1": Decimal(price1),
-                        "price2": Decimal(price2),
-                        "price3": Decimal(price3),
-                    }
-
-                )
-
-            return redirect("item_list")
+                return redirect("add_item")
 
         # SINGLE ITEM SAVE
-        price3 = request.POST.get("price3")
 
-        Item.objects.create(
-            name=request.POST.get("name"),
-            category_id=request.POST.get("category"),
-            price1=request.POST.get("price1"),
-            price2=request.POST.get("price2"),
-            price3=float(price3) if price3 else 0
-        )
+        try:
+            Item.objects.create(
+                name=request.POST.get("name"),
+                category_id=request.POST.get("category"),
+                price1=Decimal(request.POST.get("price1") or 0),
+                price2=Decimal(request.POST.get("price2") or 0),
+                price3=Decimal(request.POST.get("price3") or 0),
+            )
 
-        return redirect("item_list")
+            messages.success(request, "Item added successfully.")
+
+        except Exception:
+            messages.error(request, "Please enter valid price values.")
+
+        return redirect("add_item")
 
     return render(
         request,

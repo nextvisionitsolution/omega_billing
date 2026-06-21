@@ -155,6 +155,14 @@ document.addEventListener('keydown', function(e) {
 
 
 <div class="container-fluid mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}    
 
     <!-- HEADER -->
 

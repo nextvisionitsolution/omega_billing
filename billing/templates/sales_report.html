@@ -585,7 +585,6 @@ table.pro-table td {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Bill No</th>
                         <th>Date</th>
                         <th>Category</th>
                         <th>Item</th>
@@ -690,8 +689,7 @@ function loadSales(page = 1) {
                     </td>
 
                     <td>
-
-                        #${i.bill_no}
+                        ${i.date}
 
                         ${
                             i.item_edited
@@ -713,11 +711,6 @@ function loadSales(page = 1) {
                             :
                             ""
                         }
-
-                    </td>
-
-                    <td>
-                        ${i.date}
                     </td>
 
                     <td>
